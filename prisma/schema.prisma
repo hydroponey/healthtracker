@@ -6,12 +6,17 @@ generator client {
 }
 
 datasource db {
-    provider = "sqlite"
+    provider = "mysql"
     url      = env("DATABASE_URL")
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model Sleep {
+  id          Int       @id @default(autoincrement())
+  createdAt   DateTime  @default(now())
+  date        DateTime  @unique()
+  wakeUpTime  DateTime?
+  wakeUpTired Boolean?  @default(true)
+  getUpTime   DateTime?
+  bedTime     DateTime?
+  sleepTime   DateTime?
 }
