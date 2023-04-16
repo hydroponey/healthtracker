@@ -7,24 +7,15 @@ import { api } from "@/utils/api";
 import React from "react";
 import { Sleep as SleepModel } from "@prisma/client";
 
-interface JSXDate {
-    date: Date;
-    wakeTime: string;
-    getUpTime: string;
-    bedTime: string;
-    sleepTime: string;
-}
+import SleepTableRow from "@/interfaces/sleep/tablerow";
+
+import SleepTable from "@/components/sleep/table";
 
 const Sleep: NextPage = () => {
     const hello = api.sleep.getAll.useQuery();
     const data = hello.data;
-    const upsertSleep = api.sleep.upsert.useMutation({
-        onSuccess: () => {
-            console.log('Successfuly added sleep time');
-        }
-    });
     const today = new Date();
-    const sleepData: Array<JSXDate> = [];
+    const sleepData: Array<SleepTableRow> = [];
     const [dataLimit,setDataLimit] = useState(10);
     const [view,setView] = useState(0);
     const [showRangeSelector,setShowRangeSelector] = useState(false);
@@ -51,9 +42,9 @@ const Sleep: NextPage = () => {
         };
     }
 
-    const handleViewChange = () => {
+    /*const handleViewChange = () => {
 
-    }
+    }*/
 
     const handleLimitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (e.target.value === 'range')
@@ -65,27 +56,6 @@ const Sleep: NextPage = () => {
             if (showRangeSelector === true)
                 setShowRangeSelector(false);
             setDataLimit(parseInt(e.target.value));
-        }
-    };
-
-    const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>, date: Date) => {
-        const timeValues = e.target.value.split(':');
-        let hours: number;
-        let minutes: number;
-        if (timeValues && timeValues.length == 2)
-        {
-            hours = parseInt(timeValues[0] || '0');
-            minutes = parseInt(timeValues[1] || '0');
-            const time = new Date(date);
-    
-            time.setHours(hours, minutes, 0, 0);
-
-            console.log(e.target.title + time);
-    
-            upsertSleep.mutate({
-                date: date,
-                [e.target.title]: time
-            });
         }
     };
 
@@ -116,64 +86,10 @@ const Sleep: NextPage = () => {
                         </div>
                         <span className="ml-auto"><a href="#">Graphique</a></span>
                     </div>
-                    <table className="table-auto w-full">
-                        <thead>
-                            <tr className="text-left">
-                                <th>Réveil</th>
-                                <th>Lever</th>
-                                <th>Coucher</th>
-                                <th>Endormi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {sleepData.slice(0, dataLimit).map((day) => (
-                                <>
-                                    <tr>
-                                        <td colSpan={4}>{day.date.toLocaleDateString()}</td>
-                                    </tr>
-                                    <tr key={day.date.getTime()}>
-                                        <td>
-                                            <input
-                                                type="time"
-                                                title="wakeUpTime"
-                                                style={{width: 80}}
-                                                defaultValue={day.wakeTime}
-                                                onChange={(e) => handleTimeChange(e, day.date)}
-                                            />
-                                            <i className="fa fa-face-smile" />
-                                        </td>
-                                        <td>
-                                            <input
-                                                type="time"
-                                                title="getUpTime"
-                                                style={{width: 80}}
-                                                defaultValue={day.getUpTime}
-                                                onChange={(e) => handleTimeChange(e, day.date)}
-                                            />
-                                        </td>
-                                        <td>
-                                            <input
-                                                type="time"
-                                                title="bedTime"
-                                                style={{width: 80}}
-                                                defaultValue={day.bedTime}
-                                                onChange={(e) => handleTimeChange(e, day.date)}
-                                            />
-                                        </td>
-                                        <td>
-                                            <input
-                                                type="time"
-                                                title="sleepTime"
-                                                style={{width: 80}}
-                                                defaultValue={day.sleepTime}
-                                                onChange={(e) => handleTimeChange(e, day.date)}
-                                            />
-                                        </td>
-                                    </tr>
-                                </>
-                            ))}
-                        </tbody>
-                    </table>
+                    <SleepTable
+                        data={sleepData}
+                        limit={dataLimit}
+                    />
                 </div>
             </main>
         </>
