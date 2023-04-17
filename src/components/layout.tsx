@@ -17,7 +17,7 @@ export default function Layout({ children }: Props) {
     return (
         <div className="min-h-screen bg-gray-100">
             <Navbar links={links} />
-            <div className="pt-16">{children}</div>
+            <div>{children}</div>
         </div>
     )
 }

@@ -1,5 +1,6 @@
 import TableRow from "@/interfaces/sleep/tablerow";
 import { api } from "@/utils/api";
+import { Switch } from "@material-tailwind/react";
 
 interface TableProps {
     data: Array<TableRow>;
@@ -34,64 +35,123 @@ export default function Table({data, limit}: TableProps) {
         }
     };
 
+    const handleTiredChange = (day: TableRow, tired: boolean) => {
+        day.wakeType = !day.wakeType;
+
+        upsertSleep.mutate({
+            date: day.date,
+            wakeUpTired: tired
+        });
+    }
+
     return (
-    <table className="table-auto w-full">
-        <thead>
-            <tr className="text-left">
-                <th>Réveil</th>
-                <th>Lever</th>
-                <th>Coucher</th>
-                <th>Endormi</th>
-            </tr>
-        </thead>
-        <tbody>
-            {data.slice(0, limit).map((day) => (
-                <>
+        <div style={{overflowX: 'auto'}}>
+            <table>
+                <thead>
+                    <tr className="text-gray-400 font-normal">
+                        <th className="bg-gray-100" style={{position: 'sticky', left: 0}}></th>
+                        {data.slice(0, limit).map((day) => (
+                            <th className="font-normal">{day.date.toLocaleDateString().substring(0,5)}</th>
+                        ))}
+                    </tr>
+                </thead>
+                <tbody>
                     <tr>
-                        <td colSpan={4}>{day.date.toLocaleDateString()}</td>
+                        <td
+                            className="py-2 px-2 bg-gray-100"
+                            style={{
+                                position: 'sticky',
+                                left: 0,
+                                fontWeight: 'bold'
+                            }}
+                        >
+                            Réveil
+                        </td>
+                        {data.slice(0, limit).map((day) => (
+                            <td className="py-2 px-2">
+                                <input
+                                    className="appearance-none w-auto"
+                                    type="time"
+                                    name="wakeTime"
+                                    value={day.wakeTime}
+                                    onChange={(e) => handleTimeChange(e, day.date)}
+                                />
+                            </td>
+                        ))}
                     </tr>
-                    <tr key={day.date.getTime()}>
-                        <td>
-                            <input
-                                type="time"
-                                title="wakeUpTime"
-                                style={{width: 80}}
-                                defaultValue={day.wakeTime}
-                                onChange={(e) => handleTimeChange(e, day.date)}
-                            />
-                            <i className="fa fa-face-smile" />
+                    <tr>
+                        <td
+                            className="py-2 px-2 bg-gray-100"
+                            style={{
+                                position: 'sticky',
+                                left: 0,
+                                fontWeight: 'bold',
+                                whiteSpace: 'nowrap',
+                                zIndex: 1
+                            }}
+                        >
+                            Fatigué
                         </td>
-                        <td>
-                            <input
-                                type="time"
-                                title="getUpTime"
-                                style={{width: 80}}
-                                defaultValue={day.getUpTime}
-                                onChange={(e) => handleTimeChange(e, day.date)}
-                            />
-                        </td>
-                        <td>
-                            <input
-                                type="time"
-                                title="bedTime"
-                                style={{width: 80}}
-                                defaultValue={day.bedTime}
-                                onChange={(e) => handleTimeChange(e, day.date)}
-                            />
-                        </td>
-                        <td>
-                            <input
-                                type="time"
-                                title="sleepTime"
-                                style={{width: 80}}
-                                defaultValue={day.sleepTime}
-                                onChange={(e) => handleTimeChange(e, day.date)}
-                            />
-                        </td>
+                        {data.slice(0, limit).map((day) => (
+                            <td className="py-2 px-2">
+                                <Switch
+                                    id={`switch-${day.date.toLocaleString().substring(0,10).replaceAll('/', '-')}`}
+                                    color="blue"
+                                    checked={day.wakeType}
+                                    onChange={() => {handleTiredChange(day, !day.wakeType)}}
+                                />
+                            </td>
+                        ))}
                     </tr>
-                </>
-            ))}
-        </tbody>
-        </table>
+                    <tr>
+                        <td
+                            className="py-2 px-2 bg-gray-100"
+                            style={{position: 'sticky', left: 0, fontWeight: 'bold'}}
+                        >
+                            Lever
+                        </td>
+                        {data.slice(0, limit).map((day) => (
+                            <td className="py-2 px-2">
+                                <input
+                                    className="appearance-none w-auto"
+                                    type="time"
+                                    name="getUpTime"
+                                    value={day.getUpTime}
+                                    onChange={(e) => handleTimeChange(e, day.date)}
+                                />
+                            </td>
+                        ))}
+                    </tr>
+                    <tr>
+                        <td className="py-2 px-2 bg-gray-100" style={{position: 'sticky', left: 0, fontWeight: 'bold'}}>Coucher</td>
+                        {data.slice(0, limit).map((day) => (
+                            <td className="py-2 px-2">
+                                <input
+                                    className={`appearance-none ${day.sleepTime === "" ? "w-full" : "w-auto"}`}
+                                    type="time"
+                                    name="bedTime"
+                                    value={day.bedTime}
+                                    onChange={(e) => handleTimeChange(e, day.date)}
+                                />
+                            </td>
+                        ))}
+                    </tr>
+                    <tr>
+                        <td className="py-2 px-2 bg-gray-100" style={{position: 'sticky', left: 0, fontWeight: 'bold'}}>Endormi</td>
+                        {data.slice(0, limit).map((day) => (
+                            <td className="py-2 px-2">
+                                <input
+                                    className={`appearance-none ${day.sleepTime === "" ? "w-full" : "w-auto"}`}
+                                    type="time"
+                                    name="sleepTime"
+                                    value={day.sleepTime}
+                                    onChange={(e) => handleTimeChange(e, day.date)}
+                                />
+                            </td>
+                        ))}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     );
 }

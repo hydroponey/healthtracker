@@ -7,6 +7,7 @@ import { api } from "@/utils/api";
 import React from "react";
 import { Sleep as SleepModel } from "@prisma/client";
 
+import { Menu, MenuHandler, MenuList, MenuItem, Button } from "@material-tailwind/react";
 import SleepTableRow from "@/interfaces/sleep/tablerow";
 
 import SleepTable from "@/components/sleep/table";
@@ -17,7 +18,7 @@ const Sleep: NextPage = () => {
     const today = new Date();
     const sleepData: Array<SleepTableRow> = [];
     const [dataLimit,setDataLimit] = useState(10);
-    const [view,setView] = useState(0);
+    const [view,setView] = useState(false); // false = table, true = graph
     const [showRangeSelector,setShowRangeSelector] = useState(false);
 
     for (let i = 0; i < 30; i++)
@@ -37,6 +38,7 @@ const Sleep: NextPage = () => {
             date: current,
             wakeTime: curWakeTime,
             getUpTime: curGetUpTime,
+            wakeType: dayData?.wakeUpTired ?? false,
             bedTime: curBedTime,
             sleepTime: curSleepTime,
         };
@@ -46,8 +48,8 @@ const Sleep: NextPage = () => {
 
     }*/
 
-    const handleLimitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        if (e.target.value === 'range')
+    const handleLimitChange = (button: React.MouseEvent<HTMLLIElement>, value: number|string) => {
+        if (typeof value === 'string')
         {
             setShowRangeSelector(true);
         }
@@ -55,7 +57,7 @@ const Sleep: NextPage = () => {
         {
             if (showRangeSelector === true)
                 setShowRangeSelector(false);
-            setDataLimit(parseInt(e.target.value));
+            setDataLimit(value);
         }
     };
 
@@ -72,24 +74,60 @@ const Sleep: NextPage = () => {
                         <h1 className="font-bold text-xl mb-2">Sommeil</h1>
                     </div>
                     <div className="mb-4 flex">
-                        <select className="float-left" onChange={handleLimitChange}>
+                        <Menu>
+                            <MenuHandler>
+                                <Button variant="gradient">Période</Button>
+                            </MenuHandler>
+                            <MenuList>
+                                <MenuItem
+                                    className={`${dataLimit === 10 ? "font-bold" : ""}`}
+                                    value="10"
+                                    onClick={(e) => handleLimitChange(e, 10)}
+                                >
+                                        10 derniers jours
+                                </MenuItem>
+                                <MenuItem
+                                    className={`${dataLimit === 20 ? "font-bold" : ""}`}
+                                    value="20"
+                                    onClick={(e) => handleLimitChange(e, 20)}
+                                >
+                                        20 derniers jours
+                                </MenuItem>
+                                <MenuItem
+                                    className={`${dataLimit === 30 ? "font-bold" : ""}`}
+                                    value="30"
+                                    onClick={(e) => handleLimitChange(e, 30)}
+                                >
+                                        30 derniers jours
+                                </MenuItem>
+                            </MenuList>
+                        </Menu>
+                        {/*<select className="float-left" onChange={handleLimitChange}>
                             <option value="10">10 derniers jours</option>
                             <option value="20">20 derniers jours</option>
                             <option value="30">30 derniers jours</option>
                             <option value="range">Période personnalisée</option>
-                        </select>
+                        </select>*/}
                         <div id="custom-range" className={showRangeSelector ? '' : 'hidden'}>
                             <label htmlFor="from_date">De</label>
                             <input id="from_date" type="date" value="2023-04-15" />
                             <label htmlFor="from_date">A</label>
                             <input id="from_date" type="date" value="2023-04-15" />
                         </div>
-                        <span className="ml-auto"><a href="#">Graphique</a></span>
+                        <Button
+                            variant="gradient"
+                            className="ml-auto"
+                            onClick={() => setView(!view)}
+                        >
+                            {view === false ? "Graphique" : "Tableau"}
+                        </Button>
                     </div>
+                    <div className="mt-8">
                     <SleepTable
                         data={sleepData}
                         limit={dataLimit}
                     />
+                    </div>
                 </div>
             </main>
         </>

@@ -1,84 +1,108 @@
-import { useState } from "react";
+import React from "react";
+import {
+  Navbar,
+  MobileNav,
+  Typography,
+  IconButton,
+} from "@material-tailwind/react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 interface SingleNavLink {
-    href: string;
-    name: string;
+  href: string;
+  name: string;
 }
 
 interface NavLinks {
-    links: Array<SingleNavLink>;
+  links: Array<SingleNavLink>;
 }
 
-export default function Navbar({links}: NavLinks) {
-    const [expanded,setExpanded] = useState(false);
-    const router = useRouter();
-
-    const linkDesktopClass = (href: string) => (
-      (router.asPath === href) ?
-      "bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" :
-      "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+export default function AppNavbar({links}: NavLinks) {
+  const [openNav, setOpenNav] = React.useState(false);
+  
+  React.useEffect(() => {
+    window.addEventListener(
+      "resize",
+      () => window.innerWidth >= 960 && setOpenNav(false)
     );
-
-    const linkMobileClass = (href: string) => (
-      (router.asPath === href) ?
-      "bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" :
-      "text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
-    );
-
-    return <nav className="bg-gray-800 fixed top-0 w-full">
-    <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-      <div className="relative flex h-16 items-center justify-between">
-        <div className="absolute inset-y-0 right-0 flex items-center sm:hidden">
-          <button type="button" onClick={() => {setExpanded(!expanded)}} className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
-            <span className="sr-only">Open main menu</span>
-            <svg className="block h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
-            <svg className="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-        <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-          <div className="flex flex-shrink-0 items-center">
-            <img className="block h-8 w-auto lg:hidden" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company" />
-            <img className="hidden h-8 w-auto lg:block" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company" />
-          </div>
-          <div className="hidden sm:ml-6 sm:block">
-            <div className="flex space-x-4">
-              {/*<a href="#" className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Meals</a>*/}
-              {links.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={linkDesktopClass(link.href)}
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div className={`sm:hidden${expanded ? '' : ' hidden'}`} id="mobile-menu">
-      <div className="space-y-1 px-2 pb-3 pt-2">
-        {links.map((link) => (
-            <Link
-                key={link.href}
-                href={link.href}
-                className={linkMobileClass(link.href)}
-                onClick={() => {setExpanded(!expanded)}}
-                /*className="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium"*/
-                /*aria-current="page"*/
+  }, []);
+ 
+  const navList = (
+    <ul className="mb-4 mt-2 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
+      {links.map((link) => 
+        <Typography
+        as="li"
+        variant="small"
+        color="blue-gray"
+        className="p-1 font-normal"
+        >
+        <Link
+          href={link.href}
+          className="flex items-center"
+          onClick={() => setOpenNav(!openNav)}
+        >
+          {link.name}
+        </Link>
+        </Typography>
+      )}
+    </ul>
+  );
+ 
+  return (
+    <>
+      <Navbar className="sticky inset-0 z-10 h-max max-w-full rounded-none py-2 px-4 lg:px-8 lg:py-4">
+        <div className="flex items-center justify-between text-blue-gray-900">
+          <Typography
+            as="a"
+            href="#"
+            className="mr-4 cursor-pointer py-1.5 font-medium"
+          >
+            Healthtracker
+          </Typography>
+          <div className="flex items-center gap-4">
+            <div className="mr-4 hidden lg:block">{navList}</div>
+            <IconButton
+              variant="text"
+              className="ml-auto h-6 w-6 text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
+              ripple={false}
+              onClick={() => setOpenNav(!openNav)}
             >
-                {link.name}
-            </Link>
-        ))}
-      </div>
-    </div>
-  </nav>;
+              {openNav ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  className="h-6 w-6"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+              )}
+            </IconButton>
+          </div>
+        </div>
+        <MobileNav open={openNav}>
+          {navList}
+        </MobileNav>
+      </Navbar>
+    </>
+  );
 }
