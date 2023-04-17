@@ -1,6 +1,7 @@
 import type TableRow from "@/interfaces/sleep/tablerow";
 import { api } from "@/utils/api";
 import { Switch } from "@material-tailwind/react";
+import { debounce } from "lodash";
 
 interface TableProps {
     data: Array<TableRow>;
@@ -14,7 +15,7 @@ export default function Table({data, limit}: TableProps) {
         }
     });
 
-    const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>, date: Date) => {
+    const debouncedTimeChange = debounce((e: React.ChangeEvent<HTMLInputElement>, date: Date) => {
         const timeValues = e.target.value.split(':');
         let hours: number;
         let minutes: number;
@@ -33,6 +34,10 @@ export default function Table({data, limit}: TableProps) {
                 [e.target.name]: time
             });
         }
+    }, 800);
+
+    const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>, date: Date) => {
+        debouncedTimeChange(e, date);
     };
 
     const handleTiredChange = (day: TableRow, tired: boolean) => {
@@ -80,7 +85,7 @@ export default function Table({data, limit}: TableProps) {
                                 <input
                                     className="appearance-none w-auto"
                                     type="time"
-                                    name="wakeTime"
+                                    name="wakeUpTime"
                                     defaultValue={day.wakeTime}
                                     onChange={(e) => handleTimeChange(e, day.date)}
                                 />
@@ -144,7 +149,7 @@ export default function Table({data, limit}: TableProps) {
                                 className="py-2 px-2"
                             >
                                 <input
-                                    className={`appearance-none ${day.sleepTime === "" ? "w-full" : "w-auto"}`}
+                                    className={`appearance-none ${day.bedTime === "" ? "w-full" : "w-auto"}`}
                                     type="time"
                                     name="bedTime"
                                     defaultValue={day.bedTime}
