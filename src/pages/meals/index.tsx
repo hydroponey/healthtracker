@@ -12,8 +12,9 @@ const Meals: NextPage = () => {
                     <div className="px-2 py-4">
                         <h1 className="font-bold text-xl mb-2">Meals</h1>
                     </div>
-                    <h2>Aujourd'hui</h2>
+                    <h2>Aujourd&apos;hui</h2>
                     <h3>Petit déjeuner</h3>
+
                     <h3>Déjeuner</h3>
                     <h3>Dîner</h3>
                 </div>

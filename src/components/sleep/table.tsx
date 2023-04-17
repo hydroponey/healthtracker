@@ -1,4 +1,4 @@
-import TableRow from "@/interfaces/sleep/tablerow";
+import type TableRow from "@/interfaces/sleep/tablerow";
 import { api } from "@/utils/api";
 import { Switch } from "@material-tailwind/react";
 
@@ -26,11 +26,11 @@ export default function Table({data, limit}: TableProps) {
     
             time.setHours(hours, minutes, 0, 0);
 
-            // console.log(e.target.title + time);
+            // console.log(e.target.name + time);
     
             upsertSleep.mutate({
                 date: date,
-                [e.target.title]: time
+                [e.target.name]: time
             });
         }
     };
@@ -51,7 +51,12 @@ export default function Table({data, limit}: TableProps) {
                     <tr className="text-gray-400 font-normal">
                         <th className="bg-gray-100" style={{position: 'sticky', left: 0}}></th>
                         {data.slice(0, limit).map((day) => (
-                            <th className="font-normal">{day.date.toLocaleDateString().substring(0,5)}</th>
+                            <th
+                                key={day.date.getTime()}
+                                className="font-normal"
+                            >
+                                {day.date.toLocaleDateString().substring(0,5)}
+                            </th>
                         ))}
                     </tr>
                 </thead>
@@ -68,12 +73,15 @@ export default function Table({data, limit}: TableProps) {
                             Réveil
                         </td>
                         {data.slice(0, limit).map((day) => (
-                            <td className="py-2 px-2">
+                            <td
+                                key={day.date.getTime()}
+                                className="py-2 px-2"
+                            >
                                 <input
                                     className="appearance-none w-auto"
                                     type="time"
                                     name="wakeTime"
-                                    value={day.wakeTime}
+                                    defaultValue={day.wakeTime}
                                     onChange={(e) => handleTimeChange(e, day.date)}
                                 />
                             </td>
@@ -93,7 +101,10 @@ export default function Table({data, limit}: TableProps) {
                             Fatigué
                         </td>
                         {data.slice(0, limit).map((day) => (
-                            <td className="py-2 px-2">
+                            <td
+                                key={day.date.getTime()}
+                                className="py-2 px-2"
+                            >
                                 <Switch
                                     id={`switch-${day.date.toLocaleString().substring(0,10).replaceAll('/', '-')}`}
                                     color="blue"
@@ -111,12 +122,15 @@ export default function Table({data, limit}: TableProps) {
                             Lever
                         </td>
                         {data.slice(0, limit).map((day) => (
-                            <td className="py-2 px-2">
+                            <td
+                                key={day.date.getTime()}
+                                className="py-2 px-2"
+                            >
                                 <input
                                     className="appearance-none w-auto"
                                     type="time"
                                     name="getUpTime"
-                                    value={day.getUpTime}
+                                    defaultValue={day.getUpTime}
                                     onChange={(e) => handleTimeChange(e, day.date)}
                                 />
                             </td>
@@ -125,12 +139,15 @@ export default function Table({data, limit}: TableProps) {
                     <tr>
                         <td className="py-2 px-2 bg-gray-100" style={{position: 'sticky', left: 0, fontWeight: 'bold'}}>Coucher</td>
                         {data.slice(0, limit).map((day) => (
-                            <td className="py-2 px-2">
+                            <td
+                                key={day.date.getTime()}
+                                className="py-2 px-2"
+                            >
                                 <input
                                     className={`appearance-none ${day.sleepTime === "" ? "w-full" : "w-auto"}`}
                                     type="time"
                                     name="bedTime"
-                                    value={day.bedTime}
+                                    defaultValue={day.bedTime}
                                     onChange={(e) => handleTimeChange(e, day.date)}
                                 />
                             </td>
@@ -139,12 +156,15 @@ export default function Table({data, limit}: TableProps) {
                     <tr>
                         <td className="py-2 px-2 bg-gray-100" style={{position: 'sticky', left: 0, fontWeight: 'bold'}}>Endormi</td>
                         {data.slice(0, limit).map((day) => (
-                            <td className="py-2 px-2">
+                            <td
+                                key={day.date.getTime()}
+                                className="py-2 px-2"
+                            >
                                 <input
                                     className={`appearance-none ${day.sleepTime === "" ? "w-full" : "w-auto"}`}
                                     type="time"
                                     name="sleepTime"
-                                    value={day.sleepTime}
+                                    defaultValue={day.sleepTime}
                                     onChange={(e) => handleTimeChange(e, day.date)}
                                 />
                             </td>

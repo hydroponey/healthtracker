@@ -30,10 +30,11 @@ export default function AppNavbar({links}: NavLinks) {
     <ul className="mb-4 mt-2 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
       {links.map((link) => 
         <Typography
-        as="li"
-        variant="small"
-        color="blue-gray"
-        className="p-1 font-normal"
+          key={link.href}
+          as="li"
+          variant="small"
+          color="blue-gray"
+          className="p-1 font-normal"
         >
         <Link
           href={link.href}

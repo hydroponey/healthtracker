@@ -5,10 +5,10 @@ import { useState } from "react";
 import { api } from "@/utils/api";
 
 import React from "react";
-import { Sleep as SleepModel } from "@prisma/client";
+import { type Sleep as SleepModel } from "@prisma/client";
 
 import { Menu, MenuHandler, MenuList, MenuItem, Button } from "@material-tailwind/react";
-import SleepTableRow from "@/interfaces/sleep/tablerow";
+import type SleepTableRow from "@/interfaces/sleep/tablerow";
 
 import SleepTable from "@/components/sleep/table";
 
@@ -48,7 +48,7 @@ const Sleep: NextPage = () => {
 
     }*/
 
-    const handleLimitChange = (button: React.MouseEvent<HTMLLIElement>, value: number|string) => {
+    const handleLimitChange = (button: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.MouseEvent<HTMLLIElement, MouseEvent>, value: number|string) => {
         if (typeof value === 'string')
         {
             setShowRangeSelector(true);
